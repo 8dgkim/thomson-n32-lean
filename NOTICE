@@ -1,0 +1,10 @@
+thomson-n32-lean
+Copyright 2026 Kim DongGyu
+
+Code in this repository is licensed under the Apache License, Version 2.0 (LICENSE).
+Text is licensed under the Creative Commons Attribution 4.0 International License
+(LICENSE-CC-BY-4.0.md).
+
+This repository includes material adapted from thomson-n9-lean (MIT License) and from
+clank-lab, results/thomson-10 (Apache License 2.0). Each adapted file names its source
+in its first line, and THIRD_PARTY_NOTICES reproduces the licenses.

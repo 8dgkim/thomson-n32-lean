@@ -1,0 +1,9 @@
+# lake build Thomson32, 2026-11-03, sources identical to this repository (hashes in SHA256SUMS.txt)
+# command: LEAN_NUM_THREADS=8 lake build Thomson32; started 18:15 KST, finished 20:52 KST; peak resident memory of the process tree about 90 GB
+# last lines of the build log:
+info: Thomson32/Proof.lean:22:0: 'Thomson32.thomson_thirty_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [9696/9697] Built Thomson32 (3.4s)
+Build completed successfully (9697 jobs).
+# error and warning counts in the full log:
+errors: 0
+warnings: 11326 (linter and elaborator warnings; none is an error)

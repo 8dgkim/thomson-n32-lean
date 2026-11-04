@@ -1,0 +1,8 @@
+'Thomson32.thomson_thirty_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.Assembly.complete_of_interfaces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.Windows.WindowClassification_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.Local.LocalTarget_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.Cert.L1.pair_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.Cert.Scalar.MinorantBound_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.Cert.Scalar.ExteriorGap_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Thomson32.energy_le_upper' depends on axioms: [propext, Classical.choice, Quot.sound]

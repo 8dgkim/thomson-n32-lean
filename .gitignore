@@ -1,0 +1,5 @@
+lean/.lake/
+verification/local/
+*.olean
+*.ilean
+verification/axioms.out

@@ -1,0 +1,503 @@
+\documentclass[11pt]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage[obeyspaces,spaces]{url}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{₂}{\ensuremath{_{2}}}
+\newunicodechar{≃}{\ensuremath{\simeq}}
+\newunicodechar{ₗ}{\ensuremath{_{\ell}}}
+\newunicodechar{ᵢ}{\ensuremath{_{i}}}
+\newunicodechar{→}{\ensuremath{\to}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{‖}{\ensuremath{\|}}
+\newunicodechar{≤}{\ensuremath{\le}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{⁻}{\ensuremath{^{-}}}
+\newunicodechar{¹}{\ensuremath{^{1}}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{≠}{\ensuremath{\ne}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Sph}{S^{2}}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\abs}[1]{\lvert #1\rvert}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\cand}{\mathbf{p}}
+\DeclareUrlCommand\lean{\urlstyle{tt}}
+\emergencystretch=1.5em
+\DeclareMathOperator{\OO}{O}
+
+\lstdefinelanguage{Lean}{
+  morekeywords={import,namespace,end,abbrev,def,noncomputable,theorem,lemma,let,fun,by,open,structure,where,Prop,Type,if,then,else,match,with,do,return,instance,class,variable,section,universe,example,set_option},
+  sensitive=true,
+  morecomment=[l]{--},
+  morecomment=[s]{/-}{-/},
+  morestring=[b]",
+}
+\lstset{
+  language=Lean,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{gray},
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  extendedchars=true,
+  literate=
+    {ℝ}{{$\mathbb{R}$}}1
+    {ℚ}{{$\mathbb{Q}$}}1
+    {ℕ}{{$\mathbb{N}$}}1
+    {∑}{{$\sum$}}1
+    {‖}{{$\|$}}1
+    {≤}{{$\le$}}1
+    {≥}{{$\ge$}}1
+    {≠}{{$\ne$}}1
+    {∀}{{$\forall$}}1
+    {∃}{{$\exists$}}1
+    {→}{{$\to$}}1
+    {↔}{{$\leftrightarrow$}}1
+    {∧}{{$\wedge$}}1
+    {∈}{{$\in$}}1
+    {φ}{{$\varphi$}}1
+    {σ}{{$\sigma$}}1
+    {ρ}{{$\rho$}}1
+    {⁻¹}{{$^{-1}$}}2
+    {²}{{$^{2}$}}1
+    {₂}{{$_{2}$}}1
+    {≃ₗᵢ}{{$\simeq_{\ell i}$}}3
+    {⟨}{{$\langle$}}1
+    {⟩}{{$\rangle$}}1
+    {•}{{$\cdot$}}1
+    {√}{{$\surd$}}1
+    {×}{{$\times$}}1
+    {λ}{{$\lambda$}}1
+    {θ}{{$\theta$}}1
+    {δ}{{$\delta$}}1
+    {ε}{{$\varepsilon$}}1
+    {κ}{{$\kappa$}}1
+    {η}{{$\eta$}}1
+    {β}{{$\beta$}}1
+    {α}{{$\alpha$}}1
+    {ᵀ}{{$^{T}$}}1
+}
+
+\title[The Thomson problem for thirty-two charges]{The Thomson problem for thirty-two charges:\\ a proof verified in Lean 4}
+\date{November 6, 2026}
+
+\begin{document}
+
+\begin{abstract}
+We prove that among all configurations of thirty-two distinct points on the unit sphere in $\R^{3}$, the Coulomb energy $\sum_{i<j}\norm{x_i-x_j}^{-1}$ is minimized by the thirty-two points consisting of the twelve vertices of a regular icosahedron together with the twenty vertices of its dual dodecahedron, and that this minimizer is unique up to orthogonal transformations and relabeling. The proof is computer-assisted and has been verified in full by the kernel of the Lean~4 proof assistant, against a short formal statement that depends only on the standard axioms of Lean. The global part is a sharp three-point bound in the sense of Cohn and Woo, realized by an exact rational certificate of degree sixteen; the equality case is settled by a finite classification of near-contact Gram matrices and a local rigidity theorem with an exactly checked Hessian certificate. The proof was found by Claude Fable 5.1 (Anthropic) under the direction of Kim DongGyu, and this paper is Claude Fable 5.1's own report of that work: the mathematics, the numerical search for the certificate, the Lean development, and the text were all produced by Claude Fable 5.1, as described in Section~\ref{sec:ai}.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}\label{sec:intro}
+
+\subsection{The problem and the result}
+
+The Thomson problem \cite{Thomson1904} asks for the configurations of $N$ points on the unit sphere $\Sph\subset\R^{3}$ that minimize the Coulomb energy
+\begin{equation}\label{eq:energy}
+  \E(x)=\sum_{1\le i<j\le N}\frac{1}{\norm{x_i-x_j}},\qquad x=(x_1,\dots,x_N)\in(\Sph)^{N},\ x_i\ne x_j .
+\end{equation}
+Numerical work has produced putative minimizers for all $N$ up to several hundred (for instance \cite{ErberHockney1991}, and \cite{WalesUlker2006} for $N\le400$), but proofs of minimality are rare. The cases $N=2$ and $N=3$ are elementary; $N=4$ was settled by F\"oppl \cite{Foppl1912}, $N=6$ by Yudin \cite{Yudin1993}, and $N=12$ by Andreev \cite{Andreev1996}, and these configurations fall within the theory of universal optimality of Cohn and Kumar \cite{CohnKumar2007}. The case $N=5$ was proved by Schwartz \cite{Schwartz2013} by a computer-assisted proof. For $N=8$, Kryvonos, Liehr, and Taylor \cite{KLT2026} gave a computer-assisted proof based on the three-point bound of Cohn and Woo and verified in Lean. Several further Lean developments appeared in 2026, all produced with AI systems and, to our knowledge, not yet peer reviewed: a Lean-checked warrant for $N=8$ by Tooby-Smith and Zughaid \cite{TZWarrant}; a Lean proof for $N=7$, produced by Claude Sonnet 5.5 agents deployed by Hung Tran \cite{TranN7}; an exact sharp three-point certificate for $N=5$ with a Lean formalization, by Alex Zarco \cite{ZarcoN5}; and Lean proofs for $N=9$ \cite{ThomsonN9} and $N=10$ \cite{GrahamThomson102026}. The present paper adds the case $N=32$.
+
+For $N=32$ the putative minimizer is a rigid configuration with full icosahedral symmetry: the twelve vertices of a regular icosahedron together with the twenty vertices of its dual dodecahedron, the latter being the normalized centers of the icosahedron's faces. We call this configuration $\cand=(\cand_1,\dots,\cand_{32})$ and fix its coordinates in Section~\ref{sec:statement}. Its energy is
+\begin{equation}\label{eq:Ep}
+  \E(\cand)=412.261274650529310075450455913377997766929556857\ldots
+\end{equation}
+(the digits shown are those of a rational upper bound proved in Lean which, numerically, exceeds $\E(\cand)$ by about $2\cdot 10^{-67}$; the proved two-sided enclosure is \eqref{eq:enclosure} below).
+
+\begin{theorem}\label{thm:main}
+Let $x_1,\dots,x_{32}$ be pairwise distinct points of $\Sph$. Then $\E(x)\ge\E(\cand)$, and equality holds if and only if there are an orthogonal transformation $g\in\OO(3)$ and a permutation $\sigma$ of $\{1,\dots,32\}$ with $x_i=g\,\cand_{\sigma(i)}$ for all $i$.
+\end{theorem}
+
+Theorem~\ref{thm:main} is the Lean proposition \lean{ThomsonThirtyTwo} of Section~\ref{sec:statement} (in the namespace \lean{Thomson32}), and the theorem \lean{thomson_thirty_two} there proves it. The proof has been checked by the Lean~4 kernel (toolchain \lean{v4.34.1}, Mathlib at commit \lean{d13f23b7}) and depends only on the three standard axioms \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}. The formal development is described in Section~\ref{sec:formal}; it is available as a self-contained Lean project at \url{https://github.com/8dgkim/thomson-n32-lean}.
+
+\subsection{Method}
+
+The proof follows the architecture of the Lean-verified proofs for $N=9$ and $N=10$ \cite{ThomsonN9,GrahamThomson102026}, which in turn build on the three-point bounds of Cohn and Woo \cite{CohnWoo2012}, an adaptation to energy minimization of the semidefinite programming bounds of Bachoc and Vallentin \cite{BachocVallentin2008}, and reuses adapted versions of several of their formal modules (Section~\ref{sec:credits}). It has three parts.
+
+\emph{Global lower bound.} A polynomial $h$ of degree $32$ with rational coefficients satisfies $h(t)\le f(t):=(2-2t)^{-1/2}$ on $[-1,1)$, so that $\E(x)\ge\sum_{i<j}h(\ip{x_i}{x_j})$ for every configuration. A three-point certificate in the sense of \cite{CohnWoo2012}, an identity between polynomials in three variables whose right-hand side is manifestly nonnegative on the set of Gram matrices of three unit vectors, gives $\sum_{i<j}h(\ip{x_i}{x_j})\ge B$ for every $x\in(\Sph)^{32}$, with an explicit rational $B$. The certificate is \emph{sharp}: $B$ lies below $\E(\cand)$ by less than $4\cdot10^{-42}$. The certificate was found by semidefinite programming and converted into exact rational data; the identity and the positivity of its blocks are verified by exact integer arithmetic inside the Lean kernel.
+
+\emph{Localization.} Since $h$ touches $f$ only at the eleven inner products that occur in $\cand$, a configuration of energy at most $\E(\cand)$ has every pair inner product within $10^{-10}$ of one of these eleven values (we prove $f-h\ge 10^{-25}$ outside these windows, while the total slack available is below $4\cdot10^{-42}$). A finite combinatorial classification, again checked by the kernel, shows that any such configuration has, after a relabeling of the points, the same pattern of inner products as $\cand$, each within $10^{-10}$ of the candidate's value.
+
+\emph{Local rigidity.} A configuration whose Gram matrix is within $10^{-10}$ of the candidate's can be aligned to $\cand$ by an orthogonal transformation, with a displacement of at most $10^{-6}$. The candidate is a critical point of the energy with a positive definite constrained Hessian, which we certify by an explicit factorization $A=M^{T}M+E$ with a strictly diagonally dominant residual $E$, all checked exactly; the energy then increases quadratically in the displacement, so a configuration of energy at most $\E(\cand)$ in this neighborhood is $\cand$ itself.
+
+What distinguishes $N=32$ from the earlier cases is size: the configuration has $496$ pairs and eleven distinct inner products instead of six ($N=9$) or seven ($N=10$), the three-point certificate has $29$ blocks at degree $16$ with coefficients on a $10^{-60}$ grid, the window classification runs over $286$ color triples, $152$ of which are anchor types, and the Hessian certificate is a $96\times 96$ matrix whose entries are algebraic numbers in $\Q(\sqrt5,\sqrt3,\sqrt{1+\varphi^{2}})$. The formal development therefore relies heavily on kernel evaluation of big-integer arithmetic (Section~\ref{sec:kernel}).
+
+\subsection{What is and is not claimed}
+
+The mathematical claim of this paper is Theorem~\ref{thm:main}, and the evidence for it is the acceptance of the formal proof by the Lean kernel. A reader who wants to verify the result needs to check that the formal statement (Section~\ref{sec:statement}) says what Theorem~\ref{thm:main} says, and then to rebuild the project or replay its compiled proof with \lean{leanchecker} (Section~\ref{sec:checks}). The mathematical exposition in Sections~\ref{sec:threepoint}--\ref{sec:local} describes the proof, with references to the formal statements, but no claim in this paper rests on it.
+
+We do not claim that $\cand$ is universally optimal in the sense of \cite{CohnKumar2007}: the certificate is specific to the Coulomb potential. We also do not claim that $\cand$ is the only local minimum of $\E$ on $(\Sph)^{32}$; the local rigidity theorem concerns a neighborhood of $\cand$ only, and the global bound concerns the energy value only.
+
+\subsection{Outline}
+
+Section~\ref{sec:statement} fixes the candidate and the formal statement. Section~\ref{sec:architecture} states the six intermediate propositions and derives Theorem~\ref{thm:main} from them. Sections~\ref{sec:threepoint}, \ref{sec:windows}, and \ref{sec:local} describe the three-point certificate, the window classification, and the local rigidity theorem. Section~\ref{sec:formal} describes the formal development, the checks that were run, and the trust base. Section~\ref{sec:ai} describes how the work was produced.
+
+\section{The candidate and the formal statement}\label{sec:statement}
+
+Let $\varphi=(1+\sqrt5)/2$ and put
+\[
+  a=\frac{1}{\sqrt{1+\varphi^{2}}},\quad b=\frac{\varphi}{\sqrt{1+\varphi^{2}}},\quad c=\frac{1}{\sqrt3},\quad p=\frac{\varphi-1}{\sqrt3},\quad q=\frac{\varphi}{\sqrt3}.
+\]
+The candidate $\cand\colon\{1,\dots,32\}\to\Sph$ (indexed from $0$ to $31$ in the formal statement) consists of
+\begin{itemize}
+\item the twelve icosahedron vertices, the cyclic permutations of $(0,\pm a,\pm b)$;
+\item the eight dodecahedron vertices $(\pm c,\pm c,\pm c)$;
+\item the twelve remaining dodecahedron vertices, the cyclic permutations of $(0,\pm q,\pm p)$.
+\end{itemize}
+The twenty dodecahedron vertices are the normalized face centers of the icosahedron. The configuration is invariant under the full icosahedral group of order $120$; the orbits are the icosahedron and the dodecahedron, and the eleven inner products between distinct points are
+\begin{equation}\label{eq:palette}
+  -1,\ \pm\sqrt{\tfrac{5+2\sqrt5}{15}},\ \pm\tfrac{\sqrt5}{3},\ \pm\tfrac{\sqrt5}{5},\ \pm\tfrac13,\ \pm\sqrt{\tfrac{5-2\sqrt5}{15}},
+\end{equation}
+numerically $-1$, $\pm0.794654$, $\pm0.745356$, $\pm0.447214$, $\pm0.333333$, $\pm0.187592$. Within the icosahedron the inner products are $-1$ and $\pm\sqrt5/5$; within the dodecahedron they are $-1$, $\pm1/3$, and $\pm\sqrt5/3$; between the two orbits they are $\pm\sqrt{(5\pm2\sqrt5)/15}$. The minimal distance is $\norm{\cand_i-\cand_j}\ge 0.64$ for $i\ne j$ (the formal bound is $16/25$). The following facts are proved in the module \lean{Thomson32.Sanity} by exact algebra over $\Q(\sqrt5,\sqrt3,\sqrt{1+\varphi^2})$ followed by rational enclosures: every $\cand_i$ is a unit vector, the $\cand_i$ are pairwise distinct, $\E$ is invariant under orthogonal transformations and relabelings, and
+\begin{equation}\label{eq:enclosure}
+  412.26127<\E(\cand)<412.26128 .
+\end{equation}
+The module \lean{Thomson32.Cert.EnergyUpper} proves the sharper one-sided bound $\E(\cand)\le U$ with the rational number
+\begin{equation}\label{eq:U}
+\begin{split}
+  U&=412.26127465052931007545045591337799776692955\\
+   &\phantom{=412.}68573658865168669178508704112,
+\end{split}
+\end{equation}
+that is, $U=n/(625\cdot10^{66})$ for a $72$-digit integer $n$ (the Lean constant \lean{rawEnergyReduced}), from enclosures to seventy decimals of the eleven reciprocal distances.
+
+The formal statement is the following Lean file, which is the whole of \lean{Thomson32/Statement.lean} in the published project. It imports Mathlib \cite{Mathlib2020} and nothing else.
+
+\begin{lstlisting}
+import Mathlib
+
+namespace Thomson32
+
+abbrev R3 := EuclideanSpace ℝ (Fin 3)
+
+noncomputable def energy (x : Fin 32 → R3) : ℝ :=
+  ∑ i : Fin 32, ∑ j ∈ Finset.Ioi i, ‖x i - x j‖⁻¹
+
+noncomputable def φ : ℝ := (1 + Real.sqrt 5) / 2
+
+noncomputable def candidate : Fin 32 → R3 :=
+  let a := 1 / Real.sqrt (1 + φ ^ 2)
+  let b := φ / Real.sqrt (1 + φ ^ 2)
+  let c := 1 / Real.sqrt 3
+  let p := (φ - 1) / Real.sqrt 3
+  let q := φ / Real.sqrt 3
+  ![!₂[0, a, b], !₂[0, -a, b], !₂[0, a, -b], !₂[0, -a, -b],
+    !₂[b, 0, a], !₂[b, 0, -a], !₂[-b, 0, a], !₂[-b, 0, -a],
+    !₂[a, b, 0], !₂[-a, b, 0], !₂[a, -b, 0], !₂[-a, -b, 0],
+    !₂[c, c, c], !₂[c, c, -c], !₂[c, -c, c], !₂[c, -c, -c],
+    !₂[-c, c, c], !₂[-c, c, -c], !₂[-c, -c, c], !₂[-c, -c, -c],
+    !₂[0, q, p], !₂[0, -q, p], !₂[0, q, -p], !₂[0, -q, -p],
+    !₂[p, 0, q], !₂[p, 0, -q], !₂[-p, 0, q], !₂[-p, 0, -q],
+    !₂[q, p, 0], !₂[-q, p, 0], !₂[q, -p, 0], !₂[-q, -p, 0]]
+
+def ThomsonThirtyTwo : Prop :=
+  ∀ x : Fin 32 → R3, (∀ i, ‖x i‖ = 1) → Function.Injective x →
+    energy candidate ≤ energy x ∧
+    (energy x = energy candidate ↔
+      ∃ (g : R3 ≃ₗᵢ[ℝ] R3) (σ : Equiv.Perm (Fin 32)), ∀ i, x i = g (candidate (σ i)))
+
+end Thomson32
+\end{lstlisting}
+
+Here \texttt{EuclideanSpace ℝ (Fin 3)} is $\R^{3}$ with its standard inner product and norm, \lean{Finset.Ioi i} is the set of indices $j>i$, \texttt{!₂[a,b,c]} is the vector $(a,b,c)$, \lean{Function.Injective x} says that the points are pairwise distinct, \texttt{R3 ≃ₗᵢ[ℝ] R3} is the type of linear isometric automorphisms of $\R^{3}$, that is, of orthogonal transformations (reflections included), and \lean{Equiv.Perm (Fin 32)} is the symmetric group. Thus \lean{ThomsonThirtyTwo} is exactly Theorem~\ref{thm:main}. The theorem
+\begin{lstlisting}
+theorem thomson_thirty_two : ThomsonThirtyTwo
+\end{lstlisting}
+in \lean{Thomson32/Proof.lean} proves it.
+
+\section{Architecture of the proof}\label{sec:architecture}
+
+Throughout, $x=(x_1,\dots,x_{32})$ is a configuration of unit vectors, $t_{ij}=\ip{x_i}{x_j}$, and
+\[
+  f(t)=\frac{1}{\sqrt{2-2t}}\qquad(-1\le t<1),
+\]
+so that $\norm{x_i-x_j}^{-1}=f(t_{ij})$ for $i\ne j$ with $x_i\ne x_j$. We write $\tau_0<\tau_1<\dots<\tau_{10}$ for the eleven values \eqref{eq:palette} in increasing order, $\delta=10^{-10}$ for the \emph{window radius}, and call $W_c=[\tau_c-\delta,\tau_c+\delta]$ the $c$-th \emph{window}. The constants
+\[
+  U\ \text{as in \eqref{eq:U}},\qquad B=U-\tfrac{496\,L}{S},\qquad \gamma=10^{-25}
+\]
+are the rational upper bound on $\E(\cand)$, the certified lower bound on $\sum_{i<j}h(t_{ij})$ (where $L/S$ is the rational $\ell^{1}$ norm of the certificate's residual, Section~\ref{sec:threepoint}; numerically $U-B=3.95382865\ldots\cdot10^{-42}$), and the \emph{gap bound}.
+
+The proof is organized around six propositions, each proved in its own package of the formal development. They are stated in Lean as propositions in \lean{Thomson32/Interfaces.lean} and \lean{Thomson32/InterfacesCert.lean}; the names below are the Lean names.
+
+\begin{proposition}[\lean{PairBound}]\label{prop:pairbound}
+For every $x\in(\Sph)^{32}$, $\ \sum_{i<j}h(t_{ij})\ge B$.
+\end{proposition}
+
+\begin{proposition}[\lean{CandidateUpper}]\label{prop:candidateupper}
+$\E(\cand)\le U$.
+\end{proposition}
+
+\begin{proposition}[\lean{MinorantBound}]\label{prop:minorant}
+$h(t)\le f(t)$ for all $t\in[-1,1)$.
+\end{proposition}
+
+\begin{proposition}[\lean{ExteriorGap}]\label{prop:gap}
+If $t\in[-1,1)$ and $\abs{t-\tau_c}\ge\delta$ for all $c$, then $f(t)-h(t)\ge\gamma$.
+\end{proposition}
+
+\begin{proposition}[\lean{WindowClassification}]\label{prop:windows}
+Let $x\in(\Sph)^{32}$ be injective and suppose that for all $i\ne j$ there is a $c$ with $\abs{t_{ij}-\tau_c}<\delta$. Then there is a permutation $\sigma$ with $\abs{\ip{x_{\sigma(i)}}{x_{\sigma(j)}}-\ip{\cand_i}{\cand_j}}\le\delta$ for all $i,j$.
+\end{proposition}
+
+\begin{proposition}[\lean{LocalTarget}]\label{prop:local}
+Let $x\in(\Sph)^{32}$ be injective, and suppose that there is a permutation $\sigma$ with $\abs{\ip{x_{\sigma(i)}}{x_{\sigma(j)}}-\ip{\cand_i}{\cand_j}}\le\delta$ for all $i,j$, and that $\E(x)\le\E(\cand)$. Then $x_i=g\,\cand_{\pi(i)}$ for some $g\in\OO(3)$ and some permutation $\pi$.
+\end{proposition}
+
+The derivation of Theorem~\ref{thm:main} from these six propositions is the theorem \lean{Assembly.complete_of_interfaces}; we give the argument.
+
+\begin{proof}[Proof of Theorem~\ref{thm:main} from Propositions~\ref{prop:pairbound}--\ref{prop:local}]
+Let $x$ be an injective configuration of unit vectors. Since $x_i\ne x_j$ for $i\ne j$ we have $t_{ij}<1$, so $f(t_{ij})$ is defined and $\E(x)=\sum_{i<j}f(t_{ij})$.
+
+\emph{Step 1: if $\E(x)\le\E(\cand)$ then every $t_{ij}$ lies in a window.} By Propositions~\ref{prop:minorant} and \ref{prop:pairbound}, the \emph{slacks} $s_{ij}=f(t_{ij})-h(t_{ij})$ are nonnegative and
+\[
+  \sum_{i<j}s_{ij}=\E(x)-\sum_{i<j}h(t_{ij})\le \E(\cand)-B\le U-B<\gamma ,
+\]
+using Proposition~\ref{prop:candidateupper} and the numerical inequality $U-B<\gamma$ (which is checked by \lean{norm_num} in the theorem \lean{loss_lt_gap}). Since every slack is at most the total, $s_{ij}<\gamma$ for each pair, and Proposition~\ref{prop:gap} shows that $t_{ij}$ is within $\delta$ of some $\tau_c$.
+
+\emph{Step 2: if $\E(x)\le\E(\cand)$ then $x$ is congruent to $\cand$.} By Step 1 and Proposition~\ref{prop:windows} there is a relabeling under which the Gram matrix of $x$ is within $\delta$ of that of $\cand$; Proposition~\ref{prop:local} then gives $g$ and $\pi$ with $x_i=g\,\cand_{\pi(i)}$.
+
+\emph{Conclusion.} The energy is invariant under orthogonal transformations and relabelings (\lean{energy_congruent}), so a congruent configuration has energy $\E(\cand)$. If $\E(x)<\E(\cand)$, Step 2 would give $\E(x)=\E(\cand)$, a contradiction; hence $\E(x)\ge\E(\cand)$. If $\E(x)=\E(\cand)$, Step 2 gives the congruence; conversely a congruence gives equality.
+\end{proof}
+
+The rest of the paper explains how the six propositions are proved. Proposition~\ref{prop:candidateupper} has been described in Section~\ref{sec:statement}. Propositions~\ref{prop:pairbound}, \ref{prop:minorant}, and \ref{prop:gap} are the subject of Section~\ref{sec:threepoint}, Proposition~\ref{prop:windows} of Section~\ref{sec:windows}, and Proposition~\ref{prop:local} of Section~\ref{sec:local}.
+
+\section{The three-point bound}\label{sec:threepoint}
+
+\subsection{Three-point kernels on the sphere}
+
+We use the three-point bound of Cohn and Woo \cite[\S3]{CohnWoo2012} in the following form, which is the form of the formal theorem \lean{factored_certificate_pair_bound} (adapted from \cite{ThomsonN9,GrahamThomson102026}). Let
+\[
+  D=\{(u,v,t)\in[-1,1]^{3}:\ 1+2uvt-u^{2}-v^{2}-t^{2}\ge0\}
+\]
+be the set of triples of pairwise inner products of three unit vectors in $\R^{3}$ (the inequality is the nonnegativity of the Gram determinant). For $k\ge0$ let $C_k(a,b)$ be the homogenized Chebyshev polynomial defined by $C_0=1$, $C_1=a$, $C_{k+2}=2aC_{k+1}-bC_k$, so that $C_k(a,b)=b^{k/2}T_k(a/\sqrt b)$ for $b>0$, and put
+\[
+  K_k(u,v,t)=C_k\bigl(t-uv,\ (1-u^{2})(1-v^{2})\bigr).
+\]
+This is the degree-$k$ three-point kernel of \cite[Theorem~5]{CohnWoo2012} for $n=3$, which gives a new proof of \cite[Corollary~3.5]{BachocVallentin2008}: for any unit vectors $y,x_1,\dots,x_m$, the $m\times m$ matrix $\bigl(K_k(\ip{y}{x_i},\ip{y}{x_j},\ip{x_i}{x_j})\bigr)_{ij}$ is positive semidefinite (\lean{spherical_threePointKernel_nonneg}). Given a real matrix $\beta=(\beta_{ir})$ with rows indexed by $i\in\{0,\dots,16\}$ and columns by $r$, and the monomials $\pi_i(u)=u^{i}$, we form the factored kernel
+\[
+  S_{\beta,k}(u,v,t)=\sum_{r}\Bigl(\sum_{i}\beta_{ir}u^{i}\Bigr)\Bigl(\sum_{i}\beta_{ir}v^{i}\Bigr)K_k(u,v,t),
+\]
+its symmetrization $\bar S_{\beta,k}$ over the six permutations of $(u,v,t)$ in the sense $(u,v,t)\mapsto(v,u,t),(u,t,v),\dots$ (\lean{edgeSymmetrize}), and the \emph{corrected} kernel
+\begin{multline*}
+  \widehat S_{\beta,k}(u,v,t)=30\,\bar S_{\beta,k}(u,v,t)\\
+  +\bar S_{\beta,k}(u,u,1)+\bar S_{\beta,k}(v,v,1)+\bar S_{\beta,k}(t,t,1)+\tfrac{1}{31}\bar S_{\beta,k}(1,1,1).
+\end{multline*}
+The factor $30=N-2$ and the three middle terms are the kernel $T_k$ of \cite[\S3]{CohnWoo2012}; the last term accounts for the diagonal when the kernel is summed over ordered triples of indices that are not required to be distinct. The essential property (\lean{corrected_factor_distinctSum_nonneg}) is that for every configuration $x\in(\Sph)^{32}$,
+\[
+  \sum_{\substack{i,j,k\\ \text{distinct}}}\widehat S_{\beta,k}(t_{ij},t_{ik},t_{jk})\ \ge\ 0 .
+\]
+
+Next let $G(u,v,t)=1+2uvt-u^{2}-v^{2}-t^{2}$ and let $w_0,\dots,w_5$ be the six \emph{domain weights}
+\[
+  1,\quad 1+u,\quad 1-u,\quad G,\quad (1+u)(1-u),\quad G\,(1+u)(1-u),
+\]
+each nonnegative on $D$ (\lean{domainWeight_nonneg}); the Lean development allows a cap $M$ in place of $1$ in $1-u$, and we use $M=1$ throughout.
+
+\begin{theorem}[three-point certificate, \lean{factored_certificate_pair_bound}]\label{thm:certificate}
+Let $h\colon\R\to\R$ and $e\in\R$. Suppose that there are finitely many factor matrices $\beta^{(b)}$ with degrees $k_b$, finitely many polynomials $q_s(u,v,t)$ with multipliers $w_{c(s)}$ (each $c(s)\in\{0,\dots,5\}$, possibly after a permutation of the variables), and finitely many monomials $u^{a_\eta}v^{b_\eta}t^{d_\eta}$ with real coefficients $r_\eta$, such that for all $(u,v,t)\in D$
+\begin{multline}\label{eq:identity}
+  \frac{h(u)+h(v)+h(t)}{3}-\frac{e}{496}
+  =\sum_{b}\widehat S_{\beta^{(b)},k_b}(u,v,t)\\
+  +\sum_{s}w_{c(s)}(u,v,t)\,q_s(u,v,t)^{2}+\sum_{\eta}r_\eta\,u^{a_\eta}v^{b_\eta}t^{d_\eta}.
+\end{multline}
+Then for every configuration $x\in(\Sph)^{32}$,
+\[
+  \sum_{i<j}h(t_{ij})\ \ge\ e-496\sum_{\eta}\abs{r_\eta}.
+\]
+\end{theorem}
+
+The proof sums \eqref{eq:identity} over the $32\cdot31\cdot30$ ordered triples of distinct indices, where the left-hand side becomes a multiple of $\sum_{i<j}h(t_{ij})-e$, the kernel sums are nonnegative, the weighted squares are nonnegative pointwise on $D$, and each residual monomial is bounded by $1$ in absolute value on $D$; the bookkeeping is in \lean{pairSum_from_triple_certificate}.
+
+\subsection{The exact certificate for $N=32$}\label{sec:exactcert}
+
+The certificate used in the proof has the following data, all rational, stored in the generated modules \lean{Thomson32/Cert/L1/Data/*} and \lean{Thomson32/Cert/L1/Numbers.lean}.
+
+\begin{itemize}
+\item The minorant $h(t)=\sum_{i=0}^{32}h_i t^{i}$, a polynomial of degree $32$ whose coefficients are integers divided by $10^{60}$; its leading coefficient is about $1.8\cdot10^{3}$ and $h(-1)=f(-1)=1/2$.
+\item $e=U$, the rational upper bound \eqref{eq:U} on $\E(\cand)$.
+\item Seventeen kernel blocks $b=0,\dots,16$ with $k_b=b$, each given by a $17\times\rho_b$ integer matrix divided by $2^{200}$ with $\rho_b\le17$ (the ranks are $15,16,15,13,13,11,10,10,9,7,6,6,4,4,3,1,1$ in the order $b=0,\dots,16$).
+\item Twelve sum-of-squares blocks, one for each of the six multipliers $w_c$ and two families of symmetry-adapted monomial bases of degree up to $16$, $15$, $15$, $14$, $15$, and $13$ respectively; the squares $q_s$ are the columns of the blocks' Cholesky-type factors, with integer entries divided by $2^{400}$, applied in each of the three variable orderings $(u,v,t)$, $(v,u,t)$, $(u,t,v)$. In the formal data the squares are stored in $181$ chunks of at most $12\,000$ terms.
+\item A residual $\sum_\eta r_\eta u^{a}v^{b}t^{d}$ with $a,b,d\le32$, whose coefficients are determined by the identity, and whose $\ell^{1}$ norm $L/S$ satisfies $496\,L/S=U-B=3.95\cdot10^{-42}$ (\lean{res_l1_le}).
+\end{itemize}
+With these data \eqref{eq:identity} holds as an identity of polynomials, and Theorem~\ref{thm:certificate} gives Proposition~\ref{prop:pairbound} with $B=U-496L/S$.
+
+\emph{Verification in the kernel.} The identity \eqref{eq:identity} is an equality between polynomials in three variables of degree $32$ with rational coefficients having up to about $500$ decimal digits. It is verified by the Lean kernel as follows (\lean{Thomson32/Cert/L1/KC/*}, adapted from \cite{ThomsonN9}). Every polynomial is represented as a binary tree of terms, and its value under the Kronecker substitution $u\mapsto X$, $v\mapsto X^{m}$, $t\mapsto X^{m^{2}}$ for a sufficiently large $m$ is a single integer, assembled bottom-up with relative exponents so that every intermediate integer is as short as possible. Products of polynomials become products of integers, which the kernel evaluates with GMP-accelerated arithmetic on \lean{Nat}. The checker computes the Kronecker value of the difference between the two sides of \eqref{eq:identity} (with the residual moved to the right) in two forms: an exact zero test for the parts of the identity that are exact, and a balanced-digit decoding of the residual that bounds its collected $\ell^{1}$ norm by $L$. The soundness theorems of the checker (\lean{SOSBlock.check}, \lean{SOSBlock.checkL1} and their specifications) are proved once and for all; the data checks themselves are closed by \lean{decide +kernel}, that is, by kernel evaluation of a Boolean function to \lean{true}. The pointwise identity in the form of Theorem~\ref{thm:certificate} is then assembled in \lean{Thomson32/Cert/L1/Identity.lean} and instantiated in \lean{Thomson32/Cert/LowerBound.lean}, which proves \lean{pair_bound}, the formal version of Proposition~\ref{prop:pairbound}.
+
+\subsection{The minorant and the exterior gap}\label{sec:bernstein}
+
+Propositions~\ref{prop:minorant} and \ref{prop:gap} are statements about the one-variable polynomial $h$. With the substitution $y=\sqrt{(1-t)/2}\in(0,1]$ we have $f(t)=1/(2y)$ and $t=1-2y^{2}$, so that for $t<1$
+\[
+  h(t)\le f(t)\iff P(y):=1-2y\,h(1-2y^{2})\ge0 .
+\]
+$P$ is a polynomial of degree $65$ with rational coefficients, and Proposition~\ref{prop:minorant} is equivalent to $P\ge0$ on $[0,1]$ (\lean{potential_bound}). This is proved by Bernstein subdivision (\lean{Thomson32/Cert/Bernstein/Checker.lean}, adapted from \cite{ThomsonN9}): a polynomial with nonnegative Bernstein coefficients on an interval is nonnegative there, and the Bernstein coefficients on the two halves of an interval are integer linear combinations of those on the whole. The formal checker works with homogeneous integer coefficient lists, subdivides according to a precomputed bit string of split and accept decisions, and may divide the coefficients of a child by a positive integer to keep them short (this only weakens the certificate). For $h$ the certificate has $633$ leaves and the smallest interval has width $2^{-68}$ (around the eleven contact points, where $P$ vanishes, to second order at the ten interior ones). The run of the checker is again closed by \lean{decide +kernel}; its soundness theorem \lean{globalPoly_nonneg} then gives Proposition~\ref{prop:minorant} (\lean{MinorantBound_holds}).
+
+Proposition~\ref{prop:gap} is proved in the same way for $h+\gamma$ on each of the eleven closed intervals that make up $[-1,1)$ minus the open windows of radius $\delta$ around the $\tau_c$ (the windows are taken with rational endpoints that enclose the irrational $\tau_c\pm\delta$ from inside, so the eleven exterior intervals cover the complement): on each exterior interval $f-h-\gamma\ge0$ is $P_\gamma\ge0$ for the polynomial $P_\gamma$ built from $h+\gamma$, pulled back to a standard interval by an affine map with rational coefficients, and certified by subdivision (\lean{exterior_bound1} to \lean{exterior_bound11}, \lean{ExteriorGap_holds}). The gap $\gamma=10^{-25}$ is below the actual minimum of $f-h$ on the exterior, which is about $4.27\cdot10^{-25}$ at the window endpoints nearest to the contacts, and far above the total slack $U-B<4\cdot10^{-42}$ available in Step~1 of the proof of Theorem~\ref{thm:main}.
+
+\subsection{How the certificate was found}\label{sec:numerics}
+
+Nothing in this subsection is part of the proof; it records how the data of Section~\ref{sec:exactcert} were produced. The numerical scripts are not part of the published project.
+
+The three-point bound of \cite{CohnWoo2012} is the value of a semidefinite program: maximize $e$ over positive semidefinite kernel blocks, positive semidefinite sum-of-squares blocks, and a minorant $h\le f$ subject to \eqref{eq:identity} with zero residual. For $N=32$ at degree $16$ this program has $17$ kernel blocks of size up to $17$, twelve sum-of-squares blocks of sizes up to several hundred, and about $10^{4}$ linear equality constraints (the coefficients of the symmetric polynomial identity in three variables). We solved it with a custom interior-point implementation (the cone solver of CVXOPT \cite{CVXOPT} with implicit operators and a Schur-complement KKT solver) in a scaled Chebyshev basis, after a \emph{facial reduction} in the sense of \cite{BorweinWolkowicz1981}: since the certificate is to be sharp at $\cand$, every block must vanish on the triples of inner products realized by $\cand$, and the program is restricted to the corresponding faces of the cones. The minorant was parametrized as the Hermite interpolant of $f$ at the ten contact values $\tau_1,\dots,\tau_{10}$ (value and derivative) and $\tau_0=-1$ (value), plus a free part in the twelve-dimensional space of polynomials of degree at most $32$ vanishing to second order at the ten interior contacts and to first order at $-1$. The solver reported a certificate with margin (smallest eigenvalue of the reduced blocks) $\approx8.5\cdot10^{-7}$, which is what the exact construction needs.
+
+A point worth recording: an earlier version of the facial reduction cut the null space of each kernel block at a tolerance relative to the block's largest eigenvalue on the candidate. Nine of the seventeen kernel blocks vanish identically on the triples of $\cand$, so that their largest eigenvalue is pure rounding error, and the cut then fell inside the rounding noise and removed directions that the certificate was free to use. With that version the program reported the degree-$16$ bound for $N=32$ as \emph{not} sharp by a margin of order $10^{-3}$; the bound is sharp, and the error was found only when runs of the same program on the five-point case gave inconsistent results. The correct reduction uses an absolute floor for the cut; an enlarged face can only make the program weaker, never invalid, since every block is re-verified exactly.
+
+The numerical solution was converted into the exact data by the recipe of \cite{ThomsonN9}: rational bases of the faces are obtained from high-precision null spaces; the minorant is replaced by the exact Hermite interpolant with the free part refitted by least squares, rounded to the $10^{-60}$ grid and lowered slightly, and checked exactly against $f$; the blocks are factored by Cholesky factorization in ball arithmetic (Arb \cite{Arb}) and rounded to the $2^{-200}$ and $2^{-400}$ grids; the identity's residual, which is then of order $10^{-8}$ in the largest entries, is removed by solving a selected set of identity rows for pivot entries of the blocks in ball arithmetic and rounding the corrections; the corrected blocks are verified positive definite by an exact Cholesky factorization (smallest pivot $1.17\cdot10^{-3}$); and the exact residual of \eqref{eq:identity} is computed, with $\ell^{1}$ norm $7.97\cdot10^{-45}$. The whole conversion took about forty minutes of computation. The generated Lean data are then produced from the exact certificate by a short generator script; the correctness of the generator is irrelevant to the proof, since the Lean checker verifies the data it is given.
+
+\section{Window classification}\label{sec:windows}
+
+We now turn to Proposition~\ref{prop:windows}. Let $x\in(\Sph)^{32}$ be injective with every $t_{ij}$ ($i\ne j$) within $\delta=10^{-10}$ of one of the $\tau_c$. Since the $\tau_c$ are at mutual distance at least $0.049$, the index $c$ is unique, and we obtain a symmetric \emph{coloring} $\mathrm{col}\colon\{(i,j):i\ne j\}\to\{0,\dots,10\}$ of the pairs. The candidate has its own coloring $\mathrm{ref}$, given by $\ip{\cand_i}{\cand_j}=\tau_{\mathrm{ref}(i,j)}$ (the table \lean{refColor}, with the identity \lean{candidate_gram}). Proposition~\ref{prop:windows} follows from the purely combinatorial statement that $\mathrm{col}=\mathrm{ref}\circ(\sigma\times\sigma)$ for some permutation $\sigma$ (\lean{window_rigidity}), and this is what the finite checker establishes.
+
+The argument (adapted from \cite{ThomsonN9}, with the data regenerated for $N=32$) uses interval arithmetic on the \emph{boxes} $I_c\supseteq W_c$, rational intervals of width about $2\cdot10^{-10}$ enclosing the windows. The geometric input is that $x$ lives in $\R^{3}$: for any four points $x_{a_0},x_{a_1},x_{a_2},x_k$ the $4\times4$ Gram determinant vanishes, and for any five points $x_{a_0},x_{a_1},x_{a_2},x_k,x_l$ the $4\times4$ cross-Gram determinant $\det\bigl(\ip{x_\alpha}{x_\beta}\bigr)_{\alpha\in\{a_0,a_1,a_2,k\},\beta\in\{a_0,a_1,a_2,l\}}$ vanishes (\lean{Thomson32/Windows/Geometry.lean}). These determinants are polynomials in the inner products; evaluated on the boxes of the colors involved they give intervals, and a color assignment is \emph{excluded} when the interval does not contain $0$.
+
+\emph{Anchors.} An \emph{anchor} is a triple $(a_0,a_1,a_2)$ of points whose $3\times3$ Gram determinant is bounded away from $0$: with colors sorted, the interval of $1+2uvt-u^{2}-v^{2}-t^{2}$ on the three boxes has upper end above $\theta=10^{-5}$. Of the $286$ sorted color triples $(c_0\le c_1\le c_2)$, $134$ are \emph{flat} (the determinant interval reaches below $\theta$) and $152$ are eligible. The lemma \lean{exists_anchor} shows that among any nine of the thirty-two points some triangle is an anchor: a depth-first search, run by the kernel, enumerates all colorings of the $36$ pairs among nine points in which every triangle is flat (the search uses a set of $78$ ordered color triples containing every flat triple that the sign of the Gram determinant does not exclude), up to the relabeling that makes the colors of the pairs $(0,k)$ nondecreasing in $k$, and finds none. The search visits $16\,045$ nodes.
+
+{\sloppy\emph{Records.} For each of the $152$ eligible anchor types, a precomputed \emph{anchor record} lists the \emph{extension nodes}: the color triples $(\mathrm{col}(k,a_0),\mathrm{col}(k,a_1),\mathrm{col}(k,a_2))$ that are not excluded by the vanishing of the $4\times4$ Gram determinant. Depending on the type there are $3$, $7$, $29$, or $53$ nodes. Two nodes are \emph{adjacent} with color $c$ if the pair $(k,l)$ with these node colors and $\mathrm{col}(k,l)=c$ is not excluded by the cross-Gram determinant; in the data there is at most one such $c$ for each pair of nodes ($20\,273$ edges in all, no ambiguous edge color), and no node is adjacent to itself (no two points can occupy the same node). Hence, given an anchor, the remaining $29$ points occupy $29$ distinct, pairwise adjacent nodes: a $29$-clique in the record's node graph, and the coloring of all pairs is determined by the clique together with the edge colors. The record contains a \emph{clique certificate}, a small branching tree whose leaves enumerate the $29$-cliques (a record with $29$ nodes has at most one; the records with $53$ nodes carry two, which are mirror images of each other; $49$ cliques in all across $47$ records), and for each clique a witness permutation $\sigma$ under which the induced coloring is $\mathrm{ref}$. The anchor types that admit fewer than $29$ nodes cannot occur.\par}
+
+\emph{Verification.} The kernel checks, for every record, that the node list is complete (every non-excluded color triple is listed), that the edge list is complete, that the clique tree is valid (every cut is a non-adjacent pair, every leaf has exactly $29$ nodes, and the tree covers all cases), and that each witness matches $\mathrm{ref}$; this is the content of the $152$ modules \lean{Thomson32/Windows/Rec*.lean}, each closed by \lean{decide +kernel} after a case split on the colors, and of \lean{CheckSmall.lean} for the $134$ flat types. The soundness theorem \lean{finite_classification} in \lean{Thomson32/Windows/Soundness.lean} then shows that every symmetric coloring satisfying the determinant conditions relative to some anchor is a relabeling of $\mathrm{ref}$, and \lean{window_rigidity} combines it with the geometry and the anchor lemma. The bridge \lean{WindowClassification_holds} converts the result into the statement of Proposition~\ref{prop:windows}: $\abs{\ip{x_{\sigma(i)}}{x_{\sigma(j)}}-\ip{\cand_i}{\cand_j}}\le\delta$, with the diagonal $i=j$ trivial since both sides are $1$.
+
+\section{Local rigidity}\label{sec:local}
+
+Proposition~\ref{prop:local} is the theorem \lean{candidate_local_rigidity} in \lean{Thomson32/Local/LocalMain.lean}, obtained from the generic theorem \lean{Endgame.sublevel_congruent_of_localization} (adapted from \cite{ThomsonN9}) by supplying the candidate-specific facts. We describe the argument for a general configuration $\cand$ of unit vectors with pairwise distances at least $16/25$, and then the facts needed for our $\cand$.
+
+\subsection{Alignment}
+
+Let $x$ be a unit configuration with $\abs{\ip{x_{\sigma(i)}}{x_{\sigma(j)}}-\ip{\cand_i}{\cand_j}}\le\delta$ for all $i,j$; replacing $x$ by $x\circ\sigma$ we may assume $\sigma=\mathrm{id}$. Choose an anchor triple $(a_0,a_1,a_2)$ of the candidate with $\abs{\ip{\cand_{a_0}}{\cand_{a_1}}},\abs{\ip{\cand_{a_0}}{\cand_{a_2}}}\le19/100$ and $\abs{\ip{\cand_{a_1}}{\cand_{a_2}}}\le49/100$. The lemma \lean{gram_close_minimal_alignment_of_anchors} produces an orthogonal $Q$ that minimizes $\sum_i\norm{Q x_i-\cand_i}^{2}$ over $\OO(3)$ and satisfies
+\[
+  \rho^{2}:=\sum_{i}\norm{Qx_i-\cand_i}^{2}\le(10^{4}\delta)^{2},
+\]
+provided $\delta\le10^{-4}$; the proof first aligns the anchor triple by Gram--Schmidt (the anchor conditions bound the condition number of the anchor frame) and then uses the Gram closeness to bound every other point. Minimality over $\OO(3)$ gives the first-order condition that $\sum_i (y_i-\cand_i)\wedge\cand_i=0$ for $y=Qx$, that is, the displacement $b=y-\cand$ is orthogonal to the infinitesimal rotations of $\cand$ (the hypothesis \lean{hskew}). With $\delta=10^{-10}$ we get $\rho\le10^{-6}\le1/20000$.
+
+\subsection{The energy gap}
+
+Write $y_i=\cand_i+b_i$ with $\sum_i\norm{b_i}^{2}=\rho^{2}$, and expand each pair term: for $d=\cand_i-\cand_j$ and $w=b_i-b_j$, with $\norm{d}\ge16/25$ and $\norm{w}\le\norm{d}/200$,
+\[
+  \frac{1}{\norm{d+w}}\ \ge\ \frac{1}{\norm{d}}-\frac{\ip{d}{w}}{\norm{d}^{3}}+\frac{3\ip{d}{w}^{2}-\norm{d}^{2}\norm{w}^{2}}{2\norm{d}^{5}}-\frac{61}{10}\norm{w}^{3}
+\]
+(\lean{pair_potential_lower_unit_scale}, an algebraic inequality proved without a Taylor remainder). Summing over the pairs, the first-order terms are $\sum_i\ip{F_i}{b_i}$, where $F_i=\sum_{j\ne i}(\cand_j-\cand_i)/\norm{\cand_i-\cand_j}^{3}$ is the Coulomb force on $\cand_i$. The candidate is \emph{stationary}: $F_i=\lambda_i\cand_i$ with $\lambda_i=-\frac12\sum_{j\ne i}\norm{\cand_i-\cand_j}^{-1}$ (\lean{candidate_force_radial}, proved by exact algebra in \lean{Thomson32/Local/Stationarity*.lean}). Since $y_i$ and $\cand_i$ are unit vectors, $\ip{\cand_i}{b_i}=-\norm{b_i}^{2}/2$, so the first-order term equals $-\frac12\sum_i\lambda_i\norm{b_i}^{2}$ and is absorbed into the quadratic form. The quadratic terms form the \emph{constrained Hessian}
+\[
+  H=\Bigl(\text{block Laplacian of the pair blocks }\tfrac{3dd^{T}}{\norm{d}^{5}}-\tfrac{I}{\norm{d}^{3}}\Bigr)-\operatorname{diag}(\lambda_i I_3),
+\]
+a $96\times96$ matrix, and the second-order expansion is $\E(y)-\E(\cand)\ge\frac12\,b^{T}Hb-293\rho^{3}$ for $\rho\le1/20000$ (\lean{Thomson32/Local/LocalEstimate.lean}). The form $b^{T}Hb$ is not positive definite on all of $\R^{96}$: it vanishes on the three infinitesimal rotations, and the radial directions are constrained only by $\norm{y_i}=1$. Let $R$ be the $96\times3$ matrix whose columns are the infinitesimal rotations of $\cand$ and let $P=\operatorname{diag}(10\,\cand_i\cand_i^{T})$ be a radial penalty. The \emph{augmented Hessian}
+\begin{equation}\label{eq:augmented}
+  A=H+P+RR^{T}-\tfrac{1}{20}I
+\end{equation}
+is positive semidefinite (this is the certified fact, Section~\ref{sec:hessiancert}). For our displacement, $R^{T}b=0$ by the alignment, and $b^{T}Pb=10\sum_i\ip{\cand_i}{b_i}^{2}=\frac{10}{4}\sum_i\norm{b_i}^{4}\le\frac52\rho^{4}$; hence $b^{T}Hb\ge\frac{1}{20}\rho^{2}-\frac52\rho^{4}$ and
+\[
+  \E(y)-\E(\cand)\ \ge\ \frac{\rho^{2}}{40}-\frac54\rho^{4}-293\rho^{3}\ \ge\ \frac{\rho^{2}}{200}\qquad(0\le\rho\le1/20000)
+\]
+(\lean{candidate_local_energy_gap}). If $\E(x)\le\E(\cand)$, then $\E(y)=\E(x)\le\E(\cand)$ forces $\rho=0$, so $y=\cand$ and $x_i=Q^{-1}\cand_i$ (\lean{candidate_local_equality}); undoing the relabeling gives Proposition~\ref{prop:local}.
+
+\subsection{The Hessian certificate}\label{sec:hessiancert}
+
+The entries of $A$ are explicit algebraic numbers in $\Q(\sqrt5,\sqrt3,\sqrt{1+\varphi^{2}})$. Positive semidefiniteness is certified as follows (\lean{Thomson32/Local/Certificates/*}). A rational matrix $M$ with twelve-decimal entries is chosen as (the transpose of) a Cholesky factor of $A-\frac{1}{40}I$ computed numerically, so that $E:=A-M^{T}M$ is close to $\frac{1}{40}I$. The formal proof evaluates, in the kernel, an arithmetic circuit of $44\,578$ nodes that expresses every entry of $E$ in terms of the five generators $\sqrt5$, $\varphi$, $\sqrt{1+\varphi^{2}}$, $\sqrt3$, and their inverses, using interval arithmetic with rational endpoints (\lean{IntervalCircuit}), and obtains an enclosure of each entry; the soundness theorem of the circuit evaluator (\lean{coordinate_recipe_sound} and its relatives) guarantees that the real entry lies in the enclosure. The enclosures are strictly diagonally dominant (diagonal entries about $0.025$, off-diagonal entries below $5\cdot10^{-12}$), hence $E$ is positive definite, and $A=M^{T}M+E$ is positive definite, in particular positive semidefinite (\lean{posDef_of_residual}, \lean{candidate_augmented_hessian_posSemidef}). Numerically the eigenvalues of $A$ lie in $[1.11,48.6]$, so the margin $\frac{1}{20}$ in \eqref{eq:augmented} is far from the best possible; the local theorem needs only some positive margin.
+
+\subsection{Candidate-specific inputs}
+
+For our $\cand$ the inputs to the generic theorem are: the unit norms and the distance bound $\norm{\cand_i-\cand_j}\ge16/25$ (from the exact pair enclosures of \lean{Sanity}); the stationarity identity, proved exactly for each point by summing over the color classes of its neighbors; the anchor triple $(0,13,14)$, an icosahedron vertex and two cube vertices, with inner products $-0.1876$, $0.1876$, and $-1/3$; and the Hessian certificate. These are collected in \lean{Thomson32/Local/LocalMain.lean}.
+
+\section{The formal development}\label{sec:formal}
+
+\subsection{Structure}
+
+The published project is a Lean library \lean{Thomson32} of $772$ modules, totaling about $3.5$ million lines, almost all of which are data: the certificate modules \lean{Cert/L1/Data/*} account for $3.3$ million lines, the Hessian circuit \lean{Local/Certificates/Ambient*} for $146\,000$, the exact pair algebra \lean{Sanity/*} for $26\,000$, and the window records for $7\,000$. Seventy-two modules are hand-written; the remaining $700$ were generated by scripts from the exact certificate, the window search, and the Hessian circuit. Table~\ref{tab:packages} lists the packages and the theorem each contributes.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+Package & Main theorem & Content \\
+\midrule
+\lean{Statement} & \lean{ThomsonThirtyTwo} & the statement; imports only Mathlib \\
+\lean{Sanity}, \lean{Sanity/*} & \lean{energy_candidate_bounds} & exact pair algebra, unit norms, injectivity, enclosure \eqref{eq:enclosure}, invariance of $\E$ \\
+\lean{Cert/EnergyUpper} & \lean{energy_le_upper} & Proposition~\ref{prop:candidateupper} \\
+\lean{Cert/SDP/*} & \lean{factored_certificate_pair_bound} & Theorem~\ref{thm:certificate} \\
+\lean{Cert/L1/KC/*} & \lean{SOSBlock.check}, \lean{checkL1} & Kronecker checker and its soundness \\
+\lean{Cert/L1/*}, \lean{Cert/LowerBound} & \lean{pair_bound} & Proposition~\ref{prop:pairbound} \\
+\lean{Cert/Bernstein}, \lean{Cert/Scalar/*} & \lean{MinorantBound_holds}, \lean{ExteriorGap_holds} & Propositions~\ref{prop:minorant}, \ref{prop:gap} \\
+\lean{Windows/*} & \lean{WindowClassification_holds} & Proposition~\ref{prop:windows} \\
+\lean{Local/*} & \lean{LocalTarget_holds} & Proposition~\ref{prop:local} \\
+\lean{Interfaces}, \lean{InterfacesCert} & --- & the six propositions as Lean propositions \\
+\lean{Assembly}, \lean{Proof} & \lean{thomson_thirty_two} & Theorem~\ref{thm:main} \\
+\bottomrule
+\end{tabular}
+\caption{The packages of the library \texttt{Thomson32} (paths relative to \texttt{lean/Thomson32/}).}
+\label{tab:packages}
+\end{table}
+
+\subsection{Kernel computation}\label{sec:kernel}
+
+All data checks are closed by \lean{decide +kernel}: the elaborator hands the kernel a closed Boolean term and the kernel reduces it to \lean{true} by evaluation, using its built-in big-integer arithmetic for \lean{Nat} (backed by GMP) and the term representation of the data. No \lean{native_decide}, \lean{ofReduceBool}, \lean{implemented_by}, or \lean{extern} is used, so no compiled code is trusted; and no \lean{sorry}, \lean{admit}, or additional \lean{axiom} appears. The data are structured to make kernel evaluation feasible: polynomial identities are checked through Kronecker substitution into single integers with relative-exponent packing; the Hessian circuit is split into per-point modules so that each check touches one row of the $96\times96$ matrix; the window records are one module each; the certificate's squares are split into $181$ chunks. The total build still takes over an hour and tens of gigabytes of memory (Section~\ref{sec:checks}).
+
+\subsection{Checks performed}\label{sec:checks}
+
+The project was built and checked with Lean \lean{v4.34.1} and Mathlib at the commit
+\begin{center}\lean{d13f23b723b8a846827a245b89c10fc7d3f11612}.\end{center}
+The following were run on the published sources.
+
+\begin{enumerate}
+\item \lean{lake build Thomson32} from source: $9\,697$ build jobs (Mathlib included), no errors, with eight parallel threads; the recorded full builds took $2$ hours $37$ minutes (peak memory about $90$ GB) and, in a later run of \lean{verification/check.sh}, $73$ minutes (sampled peak $73$ GB). During the build Lean's elaborator type-checks every declaration in the kernel.
+\item \lean{#print axioms} for \lean{thomson_thirty_two}, for \lean{Assembly.complete_of_interfaces}, and for the six theorems proving Propositions~\ref{prop:pairbound}--\ref{prop:local}: each reports exactly \lean{[propext, Classical.choice, Quot.sound]}.
+\item A textual scan of all sources for the tokens \lean{axiom}, \lean{sorry}, \lean{admit}, \lean{native_decide}, \lean{ofReduceBool}, \lean{skipKernelTC}, \lean{implemented_by}, and \lean{@[extern]}: there is no occurrence.
+\item A replay of the compiled proof with \lean{leanchecker}, the standalone checker shipped with the Lean toolchain, which uses Lean's own kernel and bypasses the elaborator. Run as \lean{leanchecker --fresh Thomson32.Proof}, it re-checks every declaration of the transitive import closure of the final theorem, Mathlib included, from an empty environment in one sequential process. It accepted the closure after $22\,358$ seconds with a peak resident memory of $29.5$ GB.
+\end{enumerate}
+
+\subsection{Trust base}
+
+The truth of Theorem~\ref{thm:main}, as established here, rests on: the Lean~4 kernel and the \lean{leanchecker} binary of the pinned toolchain \cite{Lean4}; Mathlib at the pinned commit \cite{Mathlib2020} (a dependency of the statement itself, through \lean{EuclideanSpace} and the real numbers); the three standard axioms; and the faithfulness of \lean{ThomsonThirtyTwo} to Theorem~\ref{thm:main}, which the reader can judge from Section~\ref{sec:statement}. Everything else, including the hand-written soundness proofs, the generated data, the generator scripts, the semidefinite solver, and the exactifier, is checked by the kernel or irrelevant to the proof. In particular no claim depends on the correctness of the numerical software of Section~\ref{sec:numerics}, nor on the Python scripts that produced the Lean data.
+
+\subsection{Reproducing the verification}
+
+The published project contains the Lean sources; the Lake configuration files pinning the toolchain and Mathlib; the scripts that repeat the checks of Section~\ref{sec:checks} (\lean{verification/check.sh} and \lean{verification/replay.sh}), with the records of the runs reported there; documents stating the claim and describing the proof; this paper; and the licenses and notices of the adapted developments. Building it requires \lean{elan}, the pinned toolchain, Mathlib's compiled cache (obtained with \lean{lake exe cache get}), and about $100$ GB of memory for the full build with eight threads. No oleans or other build products are distributed.
+
+\section{Credits for the adapted developments}\label{sec:credits}
+
+Sixty-four of the seventy-two hand-written modules are adaptations of modules from two published Lean developments, as their headers state. The exact kernel checker, the Bernstein checker, the three-point certificate theorem, the window classification framework, and the local rigidity framework (alignment, energy expansion, Hessian transport, and circuit evaluation) are adapted from the nine-point development \cite{ThomsonN9} (MIT License), whose authors of record are the AI systems that generated it under the direction of Aravind Karthigeyan. The interface and assembly structure, the scalar bridge, and the port of the three-point package are adapted from the ten-point development of P.~Graham \cite{GrahamThomson102026} (Apache License 2.0), itself adapted from \cite{ThomsonN9}. The adaptations change the configuration size, the candidate, the number of colors, every constant, and the data layout (chunked squares, clique trees instead of subset enumeration, a residual Hessian certificate with an interval circuit, per-row Hessian modules); the mathematical architecture is theirs. The three-point bound itself is due to Cohn and Woo \cite{CohnWoo2012}, building on the semidefinite programming bounds of Bachoc and Vallentin \cite{BachocVallentin2008}, the linear programming bounds of Yudin \cite{Yudin1993} and the universal optimality framework of Cohn and Kumar \cite{CohnKumar2007}.
+
+\section{How this work was produced}\label{sec:ai}
+
+The mathematics of the proof as presented here, the three-point route, the numerical software (the semidefinite solver, the exactifier, the window search, and the Hessian certificate generator), every Lean module of the development (hand-written and generated), the verification scripts, and the text of this paper were produced by Claude Fable 5.1 (Anthropic), run at high reasoning effort in Claude Code, in a series of sessions between October 23 and November 4, 2026. Every session of the work ran that model and no other. Claude Fable 5.1 worked autonomously within each session, including the diagnosis of the facial-reduction error described in Section~\ref{sec:numerics}, which had earlier led it to report, wrongly, that the three-point bound for $N=32$ is not sharp at degree $16$.
+
+The work was directed by Kim DongGyu, who is not an author of the proof or of this paper. The case $N=32$ was chosen in an earlier session: Claude Fable 5.1 surveyed the cases up to $N=100$, and its list of candidates was narrowed down to $N=32$ together with Kim DongGyu. From that survey and an independent literature search by Kim DongGyu, we believe that the case $N=32$ had not been settled before. Kim DongGyu set the rules of the work (the formal statement is written first and audited before any proof is attempted; every claim is labeled by its evidence), audited and approved the formal statement \lean{ThomsonThirtyTwo} on October 24, 2026, directed the sessions, and publishes this work. Apart from the formal statement, the correctness of the proof rests on the Lean kernel, through the verification described in Section~\ref{sec:checks}, which anyone can repeat. Sections~\ref{sec:threepoint}--\ref{sec:local} are Claude Fable 5.1's description of its own proof, checked against the Lean sources.
+
+The two developments adapted here \cite{ThomsonN9,GrahamThomson102026} were likewise produced by AI systems under human direction, and the eight-point paper \cite{KLT2026} states that the main ideas in the proofs of its Theorems~1.1--1.3 are due to GPT-6 Astra; the reader may wish to consult their descriptions of the respective roles.
+
+\bibliographystyle{amsplain}
+{\raggedright\bibliography{refs}}
+
+\end{document}

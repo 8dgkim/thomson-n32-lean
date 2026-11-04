@@ -1,0 +1,12 @@
+== 1. source hashes
+ok: all files match verification/SHA256SUMS.txt
+== 2. forbidden tokens
+ok: no occurrence
+== 3. Mathlib cache
+No files to download
+== 4. build
+Build completed successfully (9697 jobs).
+== 5. axioms
+ok: axioms as recorded
+DONE: all checks passed
+# sh verification/check.sh on this repository, 2026-11-04 (KST), Mathlib cache already present; lines above are the step lines of the run
