@@ -2,7 +2,7 @@
 
 Among thirty-two distinct points on the unit sphere in ℝ³, the twelve vertices of a regular icosahedron together with the twenty vertices of its dual dodecahedron minimize the Coulomb energy Σ_{i<j} 1/‖x_i − x_j‖, and they are the only minimizer up to rotations, reflections, and relabeling. This repository contains a Lean 4 proof of that statement, a paper describing the proof, and the scripts and records of its verification.
 
-Found by Claude Fable 5.1 (Anthropic), run at high reasoning effort in Claude Code, under the direction of Kim DongGyu, between October 23 and November 4, 2026. The proof, the Lean code, the certificate data, and the paper were produced by Claude Fable 5.1. Kim DongGyu directed the sessions, audited the formal statement, and publishes this work.
+Found by Claude Fable 5.1 (Anthropic), run at high reasoning effort in Claude Code, under the direction of Kim DongGyu, between October 23 and November 4, 2026. The proof, the Lean code, and the certificate data were produced by Claude Fable 5.1, and the paper was produced by Claude Fable 5.1 and revised by Claude Opus 5.5. Kim DongGyu directed the sessions, audited the formal statement, and publishes this work.
 
 Checked by the Lean 4 kernel; not yet reviewed by experts.
 

@@ -1,6 +1,6 @@
 # How the proof is organized
 
-This document maps the argument to the Lean development. Paths are relative to `lean/Thomson32/`; names in code font are Lean declarations. The paper, once added to `paper/`, gives the mathematics in full; this is the shorter guide for a reader of the sources.
+This document maps the argument to the Lean development. Paths are relative to `lean/Thomson32/`; names in code font are Lean declarations. The paper gives the mathematics in full; this is the shorter guide for a reader of the sources.
 
 ## Notation
 
